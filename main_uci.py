@@ -4,7 +4,7 @@ class uci():
     self.board = chess.Board()
   
   def communication(self):
-    ply = 1
+    ply = 3
     mensagem = ""
     while mensagem != "quit":
       mensagem = input()
