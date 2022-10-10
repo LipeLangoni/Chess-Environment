@@ -1,4 +1,5 @@
 from prodigy import *
+import chess
 class uci():
   def __init__(self):
     self.board = chess.Board()
