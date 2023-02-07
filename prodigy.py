@@ -1,3 +1,6 @@
+import chess
+import random
+
 class engine():
   def __init__(self, board, ply):
     self.board = board
