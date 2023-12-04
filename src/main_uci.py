@@ -1,4 +1,5 @@
-from prodigy import *
+import version_control.v3_beta_time_control as v3_1
+import sys
 import chess
 class uci():
   def __init__(self):
@@ -32,6 +33,8 @@ class uci():
 
     if mensagem == "ucinewgame":
         return
+    if mensagem == "setoption":
+        pass
 
     if mensagem.startswith("position"):
         if len(tokens) < 2:
@@ -58,10 +61,11 @@ class uci():
         print(self.board.fen())
 
     if mensagem[0:2] == "go":
-        movimento = engine(self.board,depth)
-        movimento = movimento.movement()
+        movimento = v3_1.engine_v3_null_mv(self.board,depth)
+        movimento = movimento.movement(depth)
         print(f"bestmove {movimento}")
         return
-      
-prodigy = uci()
-prodigy.communication()
+
+if __name__ == "__main__":
+    prodigy = uci()
+    prodigy.communication()

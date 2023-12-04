@@ -1,7 +1,7 @@
 import chess
 import random
 
-class engine_v2():
+class engine_v3_null_mv():
   def __init__(self, board, ply):
     self.board = board
     self.ply = ply
@@ -153,7 +153,7 @@ class engine_v2():
     score = 0
     best_value = -1000
 
-    if ply >= 3 and not self.board.is_check():
+    if ply >= 3 and not self.board.is_check() and not self.is_ending():
       self.board.push(chess.Move.null())
       score = -self.negamax(-beta,-beta+1,ply-3)
       self.board.pop()
@@ -166,9 +166,6 @@ class engine_v2():
       score = -self.negamax(-beta, -alpha, ply-1)
     
       self.board.pop()
-
-      if score == 9999:
-        return score
 
       if best_value < score:
         best_value = score

@@ -1,7 +1,7 @@
 import chess
 import random
 
-class engine_v2():
+class engine_v3_alpha():
   def __init__(self, board, ply):
     self.board = board
     self.ply = ply
@@ -126,15 +126,9 @@ class engine_v2():
       score = -self.negamax(-beta, -alpha, ply-1)
       self.board.pop()
 
-      print("Movimentos analisados na prfundidade:",ply)
-      print(move," : ",best_value, "score",score)
-      print("------------")
 
       if best_value < score:
         best_value = score
-
-      print("Best_value escolhido:",best_value)
-      print("------------")
 
       if score >= beta:
         # print("-------Eureka Cutoff------")
@@ -218,11 +212,7 @@ class engine_v2():
           self.board.push(move)
           score = -self.negamax(-beta, -alpha, ply)
           self.board.pop()
-          if str(move) == "g8h8":
-            print("ROOT")
-            print("Movimentos analisados")
-            print(move," : ",best_value, "score",score)
-            print("------------")
+
             
           if best_move == None:
             best_move = move
@@ -260,5 +250,4 @@ class engine_v2():
 
 
     max_key = max(self.pv, key=lambda k: int(k))
-    print(self.pv[max_key])
     return self.pv[max_key][0][0]

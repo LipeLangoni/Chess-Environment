@@ -7,11 +7,23 @@ class engine():
     self.ply = ply
     self.cor = self.board.turn
 
-  def is_check_move(self,move):
-    self.board.push(move)
-    is_check = self.board.is_check()
-    self.board.pop()
-    return is_check
+  def is_ending(self):
+      queens = 0
+      minors = 0
+
+      queens+= len(self.board.pieces(chess.QUEEN,True))
+      queens+= len(self.board.pieces(chess.QUEEN,True))
+
+      pecas = [chess.ROOK, chess.BISHOP, chess.QUEEN]
+
+      for peca in pecas:
+        minors += len(self.board.pieces(peca,True))
+        minors += len(self.board.pieces(peca,False))
+
+      if queens == 0 or (queens == 2 and minors <= 1):
+        return True
+
+      return False
 
   def Piece_Square_Table(self, color):
     pawntable = [
@@ -64,15 +76,27 @@ class engine():
         -10, 0, 0, 0, 0, 0, 0, -10,
         -20, -10, -10, -5, -5, -10, -10, -20]
 
-    kingstable = [
-        20, 30, 10, 0, 0, 10, 30, 20,
-        20, 20, 0, 0, 0, 0, 20, 20,
-        -10, -20, -20, -20, -20, -20, -20, -10,
-        -20, -30, -30, -40, -40, -30, -30, -20,
-        -30, -40, -40, -50, -50, -40, -40, -30,
-        -30, -40, -40, -50, -50, -40, -40, -30,
-        -30, -40, -40, -50, -50, -40, -40, -30,
-        -30, -40, -40, -50, -50, -40, -40, -30]
+    if self.is_ending():
+      kingstable = [
+    50, -30, -30, -30, -30, -30, -30, -50,
+    -30, -30,  0,  0,  0,  0, -30, -30,
+    -30, -10, 20, 30, 30, 20, -10, -30,
+    -30, -10, 30, 40, 40, 30, -10, -30,
+    -30, -10, 30, 40, 40, 30, -10, -30,
+    -30, -10, 20, 30, 30, 20, -10, -30,
+    -30, -20, -10,  0,  0, -10, -20, -30,
+    -50, -40, -30, -20, -20, -30, -40, -50
+]
+    else:
+      kingstable = [
+          20, 30, 10, 0, 0, 10, 30, 20,
+          20, 20, -10, -10, -10, -10, 20, 20,
+          -10, -20, -20, -20, -20, -20, -20, -10,
+          -20, -30, -30, -40, -40, -30, -30, -20,
+          -30, -40, -40, -50, -50, -40, -40, -30,
+          -30, -40, -40, -50, -50, -40, -40, -30,
+          -30, -40, -40, -50, -50, -40, -40, -30,
+          -30, -40, -40, -50, -50, -40, -40, -30]
 
 
     pecas = {chess.PAWN:pawntable, chess.ROOK:rookstable, chess.BISHOP:bishopstable,chess.KNIGHT:knightstable, chess.QUEEN:queenstable, chess.KING:kingstable}
@@ -127,14 +151,8 @@ class engine():
       # print("------- "+str(ply)+ "------")
       # print(str(move) + " : " + str(score))
       self.board.pop()
-      print("Movimentos analisados")
-      print(move," : ",best_value, "score",score)
-      print("------------")
       if best_value < score:
         best_value = score
-      
-      print("Best_value escolhido:",best_value)
-      print("------------")
 
       if score >= beta:
         # print("-------Eureka Cutoff------")
@@ -207,18 +225,6 @@ class engine():
 
 
   def movement(self, ply):
-    queens_gambit = ["d2d4","c1f4","e2e3","f1c4","b1c3","g1f3","e1g1"]
-    ruy_lopes = ["e2e4","b1c3","d2d3","c1f4","","g1f3","f1b5", "d1d2","e1c1"]
-    speed_dragon = ["c7c5","g7g6","f8g7","d7d6","g8f6","e8g8","c8d6","b7b6","c8b7","b8c6"]
-    counter_d4 = ["d7d5","e7e6","g8f6","c7c5","b8c6","f8e7","e8g8","b7b6","c8b7"]
-
-    white = [queens_gambit, ruy_lopes]
-    black = [speed_dragon,counter_d4]
-
-    if self.board.turn == True:
-        oppening = random.choice(white)
-    else:
-        oppening = random.choice(black)
 
     best_move = None
     best_value = -1000
@@ -230,15 +236,12 @@ class engine():
       #print(move)
       self.board.push(move)
       score = -self.negamax(-beta, -alpha, ply)
-      print("------ROOT------")
-      print(str(move) + " : " + str(score))
       self.board.pop()
 
-      if str(move) in oppening:
-            score+=50
-      if str(move) in oppening:
-            score+=50
-
+      if best_move == None:
+          best_move = move
+          best_value = score
+          
       if best_value < score:
           best_value = score
           best_move = move
